@@ -1,4 +1,4 @@
-name: ONT_ARTIC_Analysis
+name: ONT_ARTIC_Summaries
 channels:
   - conda-forge
   - defaults

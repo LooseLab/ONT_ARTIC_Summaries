@@ -5,8 +5,18 @@ import argparse
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("-o", "--output", help="Output file", metavar="FILE")
-    p.add_argument("input", help="Input files.", nargs="+", metavar="FILE")
+    p.add_argument(
+        "-o",
+        "--output",
+        help="File name to write out the summary stats.",
+        metavar="FILE",
+    )
+    p.add_argument(
+        "input",
+        help="One or many input files. These must be ONT sequencing summary files as called by MinKNOW or Guppy with bardoing options set. Reads demultiplexed with PoreChop will not work. The files can be optionally compressed.",
+        nargs="+",
+        metavar="FILE",
+    )
     args = p.parse_args()
     # Flowcell_id	run_id	experiment_id	sample_id	pore_count	run_time	number_of_barcodes	barcode_id	pass_filtering	read_count	yield	mean_length	median_length	std_length	min_length	max_length
     for file_to_read in args.input:
