@@ -17,6 +17,12 @@ if __name__ == "__main__":
         nargs="+",
         metavar="FILE",
     )
+    p.add_argument(
+        "-c",
+        "--centre",
+        help="Sequencing Center Generating this Data.",
+        metavar="STRING",
+    )
     args = p.parse_args()
     # Flowcell_id	run_id	experiment_id	sample_id	pore_count	run_time	number_of_barcodes	barcode_id	pass_filtering	read_count	yield	mean_length	median_length	std_length	min_length	max_length
     for file_to_read in args.input:
@@ -85,6 +91,7 @@ if __name__ == "__main__":
         df_final["pore_count"] = pore_count
         df_final["barcode_count"] = len(df_final["barcode_arrangement"].unique())
         df_final["run_time"] = run_time
+        df_final["sequencing_centre"] = args.centre
 
         df_final = df_final.rename(
             columns={
@@ -99,6 +106,7 @@ if __name__ == "__main__":
         )
 
         output_order = [
+            "sequencing_centre",
             "run_id",
             "experiment_id",
             "sample_id",
