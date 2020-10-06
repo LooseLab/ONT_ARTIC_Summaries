@@ -22,29 +22,34 @@ if __name__ == "__main__":
         "--centre",
         help="Sequencing Center Generating this Data.",
         metavar="STRING",
+        required=True,
     )
     args = p.parse_args()
     # Flowcell_id	run_id	experiment_id	sample_id	pore_count	run_time	number_of_barcodes	barcode_id	pass_filtering	read_count	yield	mean_length	median_length	std_length	min_length	max_length
+
+    dtypes = {
+        "filename_fastq": "str",
+        "mux": "int64",
+        "channel": "int64",
+        "start_time": "float64",
+        "duration": "float64",
+        "run_id": "category",
+        "experiment_id": "category",
+        "sample_id": "category",
+        "passes_filtering": "category",
+        "barcode_arrangement": "category",
+        "sequence_length_template": "int64",
+    }
+
     for file_to_read in args.input:
 
         try:
             df2 = pd.read_csv(
                 file_to_read,
                 sep="\t",
-                usecols=[
-                    "filename_fastq",
-                    "mux",
-                    "channel",
-                    "start_time",
-                    "duration",
-                    "run_id",
-                    "experiment_id",
-                    "sample_id",
-                    "passes_filtering",
-                    "barcode_arrangement",
-                    "sequence_length_template",
-                ],
+                usecols=dtypes.keys(),
             )
+            df2 = df2.astype(dtypes)
         except ValueError as e:
             print("{!r} could not be read.".format(file_to_read), file=sys.stderr)
             print("{!r}.".format(e), file=sys.stderr)
