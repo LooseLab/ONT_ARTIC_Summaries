@@ -53,14 +53,18 @@ if __name__ == "__main__":
 
         df2["flowcell_id"] = df2["filename_fastq"].str[0:8]
 
-        pore_count = len(
-            df2.groupby(["mux", "channel"])
-            .size()
-            .reset_index()
-            .rename(columns={0: "count"})
-        )
-
-        run_time = np.max(df2["start_time"] + df2["duration"])
+        pore_count = {}
+        run_time = {}
+        barcode_count = {}
+        for run_id, gb in df2.groupby(["run_id"]):
+            pore_count[run_id] = len(
+                gb.groupby(["mux", "channel"])
+                .size()
+                .reset_index()
+                .rename(columns={0: "count"})
+            )
+            run_time[run_id] = np.max(gb["start_time"] + gb["duration"])
+            barcode_count[run_id] = len(gb["barcode_arrangement"].unique())
 
         df_final = df2.groupby(
             [
@@ -88,9 +92,9 @@ if __name__ == "__main__":
         df_final.columns = df_final.columns.droplevel(0)
         df_final = df_final.reset_index()
 
-        df_final["pore_count"] = pore_count
-        df_final["barcode_count"] = len(df_final["barcode_arrangement"].unique())
-        df_final["run_time"] = run_time
+        df_final["pore_count"] = df_final["run_id"].map(pore_count)
+        df_final["barcode_count"] = df_final["run_id"].map(barcode_count)
+        df_final["run_time"] = df_final["run_id"].map(run_time)
         df_final["sequencing_centre"] = args.centre
 
         df_final = df_final.rename(
