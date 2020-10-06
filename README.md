@@ -2,20 +2,36 @@
 
 To install:
 
+Clone this repository:
+
+```git clone LooseLab/ONT_ARTIC_Summaries```
+
+Then:
+
+```buildoutcfg
+cd ONT_ARTIC_Summaries
 conda env create -f environment.yml
+```
+
 
 To activate:
 
-```conda activate ONT_ARTIC_Summaries```
+```
+conda activate ONT_ARTIC_Summaries
+```
 
 
 To run:
 
-```python simple_stats.py -o output.file -c NOTTS sequencing_summary_file1.txt sequencing_summary_file2.txt```
+```
+python simple_stats.py -o output.file -c NOTTS sequencing_summary_file1.txt sequencing_summary_file2.txt```
+```
 
 You can optionally use wildcards to find sequencing summary files:
 
-```python simple_stats.py -o output.file -c NOTTS sequencing_summary*.txt```
+```
+python simple_stats.py -o output.file -c NOTTS sequencing_summary*.txt
+```
 
 Note: if the output file already exists, data will be appended to it.
 
