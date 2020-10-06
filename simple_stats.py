@@ -10,6 +10,7 @@ if __name__ == "__main__":
         "--output",
         help="File name to write out the summary stats.",
         metavar="FILE",
+        required=True,
     )
     p.add_argument(
         "input",
