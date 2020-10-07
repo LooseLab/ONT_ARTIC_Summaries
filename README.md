@@ -67,6 +67,6 @@ NOTTS   d00b486adc2ea7266fc2d4549d293d6fb22638f1        CV      CV094_24_M1     
 ```
 The file contains one row per barcode pass/fail dataset. So a run with 96 barcodes will generate 194 rows.
 
-These data will be used to analyse yield and performance of various ARTIC protocols.
+These data will be used to analyse yield and performance of various ARTIC protocols. The script anticipates sequencing summary files from MinKNOW/Guppy running with barcoding enabled. It will skip any files that do not contain barcoded data.
 
 Once you have collated the data from your centre, please either send the data to Matt Loose or upload to the shared google doc. 
