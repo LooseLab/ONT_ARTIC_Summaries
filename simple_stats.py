@@ -10,6 +10,7 @@ if __name__ == "__main__":
         "--output",
         help="File name to write out the summary stats.",
         metavar="FILE",
+        required=True,
     )
     p.add_argument(
         "input",
@@ -22,29 +23,34 @@ if __name__ == "__main__":
         "--centre",
         help="Sequencing Center Generating this Data.",
         metavar="STRING",
+        required=True,
     )
     args = p.parse_args()
     # Flowcell_id	run_id	experiment_id	sample_id	pore_count	run_time	number_of_barcodes	barcode_id	pass_filtering	read_count	yield	mean_length	median_length	std_length	min_length	max_length
+
+    dtypes = {
+        "filename_fastq": "str",
+        "mux": "int64",
+        "channel": "int64",
+        "start_time": "float64",
+        "duration": "float64",
+        "run_id": "category",
+        "experiment_id": "category",
+        "sample_id": "category",
+        "passes_filtering": "category",
+        "barcode_arrangement": "category",
+        "sequence_length_template": "int64",
+    }
+
     for file_to_read in args.input:
 
         try:
             df2 = pd.read_csv(
                 file_to_read,
                 sep="\t",
-                usecols=[
-                    "filename_fastq",
-                    "mux",
-                    "channel",
-                    "start_time",
-                    "duration",
-                    "run_id",
-                    "experiment_id",
-                    "sample_id",
-                    "passes_filtering",
-                    "barcode_arrangement",
-                    "sequence_length_template",
-                ],
+                usecols=dtypes.keys(),
             )
+            df2 = df2.astype(dtypes)
         except ValueError as e:
             print("{!r} could not be read.".format(file_to_read), file=sys.stderr)
             print("{!r}.".format(e), file=sys.stderr)
@@ -78,14 +84,18 @@ if __name__ == "__main__":
 
         df2["flowcell_id"] = df2["filename_fastq"].str[0:8]
 
-        pore_count = len(
-            df2.groupby(["mux", "channel"])
-            .size()
-            .reset_index()
-            .rename(columns={0: "count"})
-        )
-
-        run_time = np.max(df2["start_time"] + df2["duration"])
+        pore_count = {}
+        run_time = {}
+        barcode_count = {}
+        for run_id, gb in df2.groupby(["run_id"]):
+            pore_count[run_id] = len(
+                gb.groupby(["mux", "channel"])
+                .size()
+                .reset_index()
+                .rename(columns={0: "count"})
+            )
+            run_time[run_id] = np.max(gb["start_time"] + gb["duration"])
+            barcode_count[run_id] = len(gb["barcode_arrangement"].unique())
 
         df_final = df2.groupby(
             [
@@ -113,9 +123,9 @@ if __name__ == "__main__":
         df_final.columns = df_final.columns.droplevel(0)
         df_final = df_final.reset_index()
 
-        df_final["pore_count"] = pore_count
-        df_final["barcode_count"] = len(df_final["barcode_arrangement"].unique())
-        df_final["run_time"] = run_time
+        df_final["pore_count"] = df_final["run_id"].map(pore_count)
+        df_final["barcode_count"] = df_final["run_id"].map(barcode_count)
+        df_final["run_time"] = df_final["run_id"].map(run_time)
         df_final["sequencing_centre"] = args.centre
 
         df_final = df_final.rename(
