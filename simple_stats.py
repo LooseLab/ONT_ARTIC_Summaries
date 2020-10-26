@@ -80,8 +80,6 @@ if __name__ == "__main__":
                 print("{!r}.".format(p), file=sys.stderr)
                 continue
 
-        print(df2)
-
         df2["flowcell_id"] = df2["filename_fastq"].str[0:8]
 
         pore_count = {}
