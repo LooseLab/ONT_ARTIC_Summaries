@@ -42,6 +42,18 @@ if __name__ == "__main__":
         "sequence_length_template": "int64",
     }
 
+    dtypes2 = {
+        "filename": "str",
+        "mux": "int64",
+        "channel": "int64",
+        "start_time": "float64",
+        "duration": "float64",
+        "run_id": "category",
+        "passes_filtering": "category",
+        "barcode_arrangement": "category",
+        "sequence_length_template": "int64",
+    }
+
     for file_to_read in args.input:
 
         try:
@@ -59,18 +71,9 @@ if __name__ == "__main__":
                 df2 = pd.read_csv(
                     file_to_read,
                     sep="\t",
-                    usecols=[
-                        "filename",
-                        "mux",
-                        "channel",
-                        "start_time",
-                        "duration",
-                        "run_id",
-                        "passes_filtering",
-                        "barcode_arrangement",
-                        "sequence_length_template",
-                    ],
+                    usecols=dtypes2.keys(),
                 )
+                df2 = df2.astype(dtypes2)
                 df2["filename_fastq"]=df2["filename"]
                 df2["experiment_id"]="NaN"
                 df2["sample_id"]="NaN"
