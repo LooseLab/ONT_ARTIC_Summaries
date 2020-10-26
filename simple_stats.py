@@ -48,8 +48,33 @@ if __name__ == "__main__":
         except ValueError as e:
             print("{!r} could not be read.".format(file_to_read), file=sys.stderr)
             print("{!r}.".format(e), file=sys.stderr)
+            print("Trying alternate approach.", file=sys.stderr)
+            try:
+                df2 = pd.read_csv(
+                    file_to_read,
+                    sep="\t",
+                    usecols=[
+                        "filename",
+                        "mux",
+                        "channel",
+                        "start_time",
+                        "duration",
+                        "run_id",
+                        "passes_filtering",
+                        "barcode_arrangement",
+                        "sequence_length_template",
+                    ],
+                )
+                df2["filename_fastq"]=df2["filename"]
+                df2["experiment_id"]="NaN"
+                df2["sample_id"]="NaN"
 
-            continue
+            except ValueError as p:
+                print("{!r} could not be read.".format(file_to_read), file=sys.stderr)
+                print("{!r}.".format(p), file=sys.stderr)
+                continue
+
+        print(df2)
 
         df2["flowcell_id"] = df2["filename_fastq"].str[0:8]
 
