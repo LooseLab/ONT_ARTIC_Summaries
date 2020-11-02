@@ -25,8 +25,14 @@ if __name__ == "__main__":
         metavar="STRING",
         required=True,
     )
+    p.add_argument(
+        "-a",
+        "--append",
+        action="store_true",
+        dest="append_existing",
+        help="Append results to an existing file, if not set and the output file exists it will be deleted before being written to.",
+    )
     args = p.parse_args()
-    # Flowcell_id	run_id	experiment_id	sample_id	pore_count	run_time	number_of_barcodes	barcode_id	pass_filtering	read_count	yield	mean_length	median_length	std_length	min_length	max_length
 
     dtypes = {
         "filename_fastq": "str",
@@ -53,6 +59,9 @@ if __name__ == "__main__":
         "barcode_arrangement": "category",
         "sequence_length_template": "int64",
     }
+    
+    if not args.append_existing and os.path.isfile(args.output):
+        os.remove(args.output)
 
     for file_to_read in args.input:
 
