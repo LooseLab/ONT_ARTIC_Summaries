@@ -4,7 +4,7 @@ To install:
 
 Clone this repository:
 
-```git clone LooseLab/ONT_ARTIC_Summaries```
+```git clone https://github.com/LooseLab/ONT_ARTIC_Summaries```
 
 Then:
 
